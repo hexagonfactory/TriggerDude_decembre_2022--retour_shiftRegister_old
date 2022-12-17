@@ -2,10 +2,8 @@
 // 16   32   64   128
 // 1    2    4    8
 
-void setPadsActions_normalMode() { // NORMAL MODE
+void setPadsActions_normalMode() {
   static unsigned long button_micro = 0;
-  static byte currentBankDisplay = get_currentBank_Display(0);
-  static byte currentPatternDisplay = get_currentPattern_Display(0);
 
   if (current_pinValues != last_pinValues) {
     if ((current_pinValues > 0) && (current_pinValues < 4096)) {
@@ -15,6 +13,7 @@ void setPadsActions_normalMode() { // NORMAL MODE
       timeFlag_pads = true;
       update_screen_PADS = true;
     }
+    update_padLeds = true;
   }
 
   if ((current_pinValues > 0) && (current_pinValues < 4096)) {
@@ -23,10 +22,6 @@ void setPadsActions_normalMode() { // NORMAL MODE
         selected_Track = track;
         //update_screen_PADS = true;
         read_Seq_dont_play_this[track] = false;
-
-        if (!ALT_pushed && (bank[currentBank].pattern[currentPattern].track_isGate[track] == 0)) {
-          button_micros[track] = micros();
-        }
 
         if (!ALT_pushed && recMode && PLAY_pushed) {
           uint16_t stepToWrite = get_track_step_TRIGS(track, 0);
@@ -68,10 +63,10 @@ void setPadsActions_normalMode() { // NORMAL MODE
       }
     }
 
-    update_padLeds = true;
+    //update_padLeds = true;
 
     if (!ALT_pushed)
-      make595Play_Trigs_from_Pads(decimalValue_from_pads(), button_micro);
+      make595Play_Trigs_from_Pads(decimalValue_from_pads(), decimalValue_from_pads(), button_micro);
   }
 
 }
@@ -124,16 +119,12 @@ void setPadsActions_ChromaMode_KBoard() { // CHROMA MODE
       if (bank[currentBank].pattern[currentPattern].track_isGate[selected_Track] == 0)
         button_micro = micros();
 
+      timeFlag_pads = true;
       padPushed[selected_Track] = 1;
     }
-
-    //update_shiftRegisters = true;
   }
 
   if ((current_pinValues > 0) && (current_pinValues < 4096)) {
-    byte currentBankDisplay = get_currentBank_Display(0);
-    byte currentPatternDisplay = get_currentPattern_Display(0);
-
     for (byte pad = 0; pad < TRACKS; ++pad) {
       if (trigsIn_BitVal[pad]) {
         pitchPointer_Pad = pad + octaveValue;
@@ -146,7 +137,6 @@ void setPadsActions_ChromaMode_KBoard() { // CHROMA MODE
           uint8_t bitPos_trigs = stepToWrite_TRIGS & 7;
           byte stepAdvance = 0;
 
-          //if (bank[currentBank].pattern[currentPattern].track_isGate[selected_Track] == 0) { // IF TRACK TYPE = TRIG
           if (current_pinValues != last_pinValues) {
             if (bank[currentBank].pattern[currentPattern].quantizeBeat) {
               if (bitPos_trigs == 1) {
@@ -194,7 +184,7 @@ void setPadsActions_ChromaMode_KBoard() { // CHROMA MODE
       }
     }
 
-    make595Play_Trigs_from_ChromaMode(decimalValue_from_chromaMode(), button_micro);
+    make595Play_Trigs_from_ChromaMode(decimalValue_from_chromaMode(), button_micro, bank[currentBank].pattern[currentPattern].track_isGate[selected_Track]);
   }
 
 }
@@ -530,6 +520,7 @@ void setPadsActions_bankPatternSel() { // BANK - PATTERN SELECTION
               nextPattern = pad;
               patternChange_triggered = true;
             }
+            
             else {
               currentPattern = pad;
               loadPattern_params();
@@ -721,16 +712,6 @@ void setPadsActions_muteSolo() { // MUTE - SOLO
 }
 
 
-/*if (current_pinValues != last_pinValues) {
-    byte currentBankDisplay = get_currentBank_Display(0);
-    byte currentPatternDisplay = get_currentPattern_Display(0);
-
-    if ((current_pinValues > 0) && (current_pinValues < 4096)) {
-      button_micro = micros();
-      timeFlag_pads = true;
-    }*/
-
-
 void setPadsActions_Fill() {
   if (current_pinValues != last_pinValues) {
     static byte currentBankDisplay = 0;
@@ -806,8 +787,6 @@ void setPadsActions_Shift() { // FILL - SHIFT
 
 void setPadsActions_deleteSteps() {
   if ((current_pinValues > 0) && (current_pinValues < 4096)) {
-    byte currentBankDisplay = get_currentBank_Display(0);
-    byte currentPatternDisplay = get_currentPattern_Display(0);
 
     for (byte track = 0; track < TRACKS; ++track) {
       if (trigsIn_BitVal[track] && ( (micros() - last_pads_DebounceTime_micros[track]) >= DEBOUNCE_PADS_MICROS)) {
@@ -864,9 +843,6 @@ void setPadsActions_deleteSteps() {
 void setPadsActions_clearTrack() {
   if (current_pinValues != last_pinValues) {
     if ( (current_pinValues > 0) && (current_pinValues < 4096) ) {
-      byte currentBankDisplay = get_currentBank_Display(0);
-      byte currentPatternDisplay = get_currentPattern_Display(0);
-
       for (byte track = 0; track < TRACKS; ++track) {
         if (trigsIn_BitVal[track] && ((micros() - last_pads_DebounceTime_micros[track]) >= DEBOUNCE_PADS_MICROS)) {
           last_pads_DebounceTime_micros[track] = micros();

@@ -22,27 +22,32 @@ unsigned int scale_transpose_value(int8_t pitchPtr) { // scale_transpose_value(p
 }
 
 
-void makeDACplayNotes_from_Sequences() {
-  byte currentPatternDisplay = get_currentPattern_Display(0);
-  byte currentBankDisplay = get_currentBank_Display(0);
-
+void makeDACplayNotes() {
   for (byte dac = 0; dac < 4; ++dac) {
     byte track = bank[currentBank].pattern[currentPattern].cvOut_Tracks[dac];
 
-    if (track == 12) // desactivé
-      pitchOut = notesValues[24];
+    if (track == 12) { // desactivé
+      //pitchOut = notesValues[24];
+      Dac.setPowerDown(dac, DAC8554_POWERDOWN_100K);
+    }
 
     else {
       if (track < TRACKS) {
         byte trackStep = get_track_step_PITCH(track, 0);
-        byte realTrack = track + bank[currentBankDisplay].pattern[currentPatternDisplay].AB_State[track];            // track = 4
+        byte realTrack = track + bank[currentBankDisplay].pattern[currentPatternDisplay].AB_State[track];
         int8_t transpose_coeff = bank[currentBankDisplay].pattern[currentPatternDisplay].transposeValue[realTrack];
 
         int8_t pitchPointer_Transposed = bank[currentBankDisplay].pattern[currentPatternDisplay].Pitch[realTrack] [trackStep] + (12 * transpose_coeff);
 
+        uint16_t bytePlaying_trigs = get_track_step_TRIGS(track, 0) / 8;
+        uint8_t bytePlaying_bitPos = bytePlaying_trigs & 7;
+
         if (bank[currentBankDisplay].pattern[currentPatternDisplay].glide_steps[track] == 0) { // TESTER DaC[dac].glideActive ???
           if (!padPushed[track]) {
-            pitchOut = notesValues[scale_transpose_value(pitchPointer_Transposed)];
+            if ((bank[currentBank].pattern[currentPattern].Trigs[realTrack][bytePlaying_trigs] & masks[bytePlaying_bitPos]) > 0)
+              pitchOut = notesValues[scale_transpose_value(pitchPointer_Transposed)];
+            else
+              pitchOut = notesValues[pitchPointer_Pad];
 
             if (/*chromaMode_Arp && */arp_latch && arp_latch_active)
               pitchOut = notesValues[arpNotes[arpCounter]];
@@ -143,11 +148,15 @@ void makeDACplayNotes_from_Sequences() {
             pitchOut = sine[lfoPointer];
             break;
 
-          case 3 : // triangle
+          case 3 : // Triangle
             pitchOut = triangle[lfoPointer];
             break;
 
-          case 4 : // Random
+          case 4 : // Square
+            pitchOut = LFO[lfoNum].squareVal;
+            break;
+
+          case 5 : // Random
             pitchOut = LFO[lfoNum].randomVal;
             break;
         }
@@ -156,28 +165,24 @@ void makeDACplayNotes_from_Sequences() {
           pitchOut -= (pitchOut - 26200.0) * (1 - (bank[currentBankDisplay].pattern[currentPatternDisplay].lfo_gain[lfoNum] / 100.0));
         }
       }
+
+      Dac.setValue(dac, -(pitchOut));
     }
 
-    //if (PLAYING)
-    Dac.setValue(dac, -(pitchOut));
+    //Dac.setValue(dac, -(pitchOut));
   }
 }
 
 
 
 
-void makeDACplayNotes_from_ChromaMode(byte pitchVal, byte track) { //pitch_pointer_pads
-  byte dacPLAYING = 0;
+void makeDACplayNotes_from_ChromaMode(byte pitchVal, byte track) {
   for (byte dac = 0; dac < 4; ++dac) {
     if (bank[currentBank].pattern[currentPattern].cvOut_Tracks[dac] == track) {
-      dacPLAYING = dac;
+      Dac.setValue(dac, -(notesValues[pitchVal]));
       break;
     }
   }
-
-  int pitchOut = notesValues[pitchVal];
-  Dac.setValue(dacPLAYING, -(pitchOut));
-
 }
 
 /*

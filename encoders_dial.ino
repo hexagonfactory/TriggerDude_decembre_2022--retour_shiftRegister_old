@@ -247,8 +247,6 @@ void set_ChromaMode_glide_param_selection() {
 
 
 void set_glide_MODE() {
-  byte currentPatternDisplay = get_currentPattern_Display(0);
-  byte currentBankDisplay = get_currentBank_Display(0);
   bool gMode = bank[currentBank].pattern[currentPattern].glide_mode[selected_Track];
 
   if ((enc1_dir == 1) && (gMode == 0))
@@ -264,9 +262,6 @@ void set_glide_MODE() {
 
 
 void calc_GLIDE_time() {
-  byte currentPatternDisplay = get_currentPattern_Display(0);
-  byte currentBankDisplay = get_currentBank_Display(0);
-
   for (byte dac = 0; dac < 4; ++dac) {
     if (DaC[dac].glideActive) {
       byte track = bank[currentBankDisplay].pattern[currentPatternDisplay].cvOut_Tracks[dac]; // 0 (tracks) à 12 (12 = pas de glide sur ce track)
@@ -279,8 +274,6 @@ void calc_GLIDE_time() {
 
 
 void set_glide_STEPS() {
-  byte currentPatternDisplay = get_currentPattern_Display(0);
-  byte currentBankDisplay = get_currentBank_Display(0);
   byte gSteps = bank[currentBankDisplay].pattern[currentPatternDisplay].glide_steps[selected_Track];
 
   if ((enc1_dir == 1) && (gSteps < 4))
@@ -805,8 +798,8 @@ void set_lfo_wave(byte lfoNum) {
     }
   }
 
-  if (bank[currentBank].pattern[currentPattern].lfo_wave[lfoNum] == 4)
-    LFO[0].randomVal = RandomNum.randrange(300, 52200, 200);
+  if (bank[currentBank].pattern[currentPattern].lfo_wave[lfoNum] == 5)
+    LFO[lfoNum].randomVal = RandomNum.randrange(300, 52200, 200);
 
   fired_2 = false;
 }

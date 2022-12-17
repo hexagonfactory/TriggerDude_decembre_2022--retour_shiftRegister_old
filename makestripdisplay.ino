@@ -4,36 +4,29 @@ void makeStripDisplay_Nothing() {
       strip.setPixelColor(track, 0);
     }
 
-    update_padLeds = false; 
+    update_padLeds = false;
     strip.show();
   }
 }
 
 
 void makeStripDisplayRemote() {
-  if (PLAYING) {
-    if ((global_Step_Counter16 == 0) || (global_Step_Counter16 == 4) || (global_Step_Counter16 == 8) || (global_Step_Counter16 == 12))
-      strip.setPixelColor(13, playBtn);
-    else
-      strip.setPixelColor(13, 0);
-  }
-  else if (PLAY_pushed) {
+  strip.setPixelColor(12, 0);
+  strip.setPixelColor(13, 0);
+  strip.setPixelColor(14, 0);
+
+  if ((PLAYING && (global_Step_Counter16 == 0 || global_Step_Counter16 == 4 || global_Step_Counter16 == 8 || global_Step_Counter16 == 12)) || (!SYNC_mode_internal && PLAY_pushed))
     strip.setPixelColor(13, playBtn);
-  }
 
   if (recMode)
     strip.setPixelColor(14, recModeActive);
   else {
     if (MICROTIMING)
       strip.setPixelColor(14, 17, 105, 64);
-    else
-      strip.setPixelColor(14, 0);
   }
 
   if (global_Step_Counter16 == 0)
     strip.setPixelColor(12, 255, 231, 97);
-  else
-    strip.setPixelColor(12, 0);
 }
 
 
@@ -43,6 +36,7 @@ void makeStripDisplay_Trigs(uint32_t playColor, uint32_t blankColor) {
       if (trigsIn_BitVal[track]) {
         strip.setPixelColor(track, playA);
       }
+      
       else {
         if (trigsOut_BitVal[track])
           strip.setPixelColor(track, playColor);
@@ -53,10 +47,10 @@ void makeStripDisplay_Trigs(uint32_t playColor, uint32_t blankColor) {
 
     update_padLeds = false;
     strip.show();
-    //update_padLeds_off = true;
+    update_padLeds_off = true;
   }
 
-  /*if (update_padLeds_off) {
+  if (update_padLeds_off) {
     if (micros() - clock_time_16PPQN >= step_micros - (step_micros / 4)) {
       update_padLeds_off = false;
       for (byte track = 0; track < TRACKS; ++track) {
@@ -67,7 +61,7 @@ void makeStripDisplay_Trigs(uint32_t playColor, uint32_t blankColor) {
       }
       strip.show();
     }
-    }*/
+  }
 }
 
 
@@ -249,8 +243,6 @@ void makeStripDisplay_Fill_State() {
 
 void makeStripDisplay_Shift_Value() {
   if (update_padLeds) {
-    byte currentBankDisplay = get_currentBank_Display(0);
-    byte currentPatternDisplay = get_currentPattern_Display(0);
     for ( byte track = 0; track < TRACKS; ++track) {
       int8_t shiftVal = bank[currentBankDisplay].pattern[currentPatternDisplay].shiftValue[track];
       byte x = track + bank[currentBankDisplay].pattern[currentPatternDisplay].AB_State[track];
@@ -288,9 +280,6 @@ void makeStripDisplay_Shift_Value() {
 
 void makeStripDisplay_Clear_Screen() {
   if (update_padLeds) {
-    byte currentBankDisplay = get_currentBank_Display(0);
-    byte currentPatternDisplay = get_currentPattern_Display(0);
-
     for ( byte track = 0; track < TRACKS; ++track) {
       byte realTrack = track + bank[currentBankDisplay].pattern[currentPatternDisplay].AB_State[track];
       uint8_t byteToRead = realTrack / 8;
@@ -319,7 +308,6 @@ void makeStripDisplay_Clear_Screen() {
 
 void makeStripDisplay_Pattern_Selection() {
   if (update_padLeds) {
-    byte currentPatternDisplay = get_currentPattern_Display(0);
     for (byte pad = 0; pad < PATTERNS; ++pad) {
       if (pad == currentPatternDisplay)
         strip.setPixelColor(pad, playD);
@@ -434,7 +422,7 @@ void makeStripDisplay_SongMode() {
 
 void makeStripDisplay_Bank_Selection() {
   if (update_padLeds) {
-    byte currentBankDisplay = get_currentBank_Display(0);
+    //byte currentBankDisplay = get_currentBank_Display(0);
     for (byte pad = 0; pad < TRACKS; ++pad) {
       if (pad == currentBankDisplay)
         strip.setPixelColor(pad, 219, 197, 0);
@@ -452,9 +440,6 @@ void makeStripDisplay_StepSeq(byte selected_Track) {
   if (update_padLeds) {
     uint32_t stepSeqBlank = strip.Color(220, 125, 30); // step seq blank step
     uint32_t color = strip.Color(0, 0, 0);
-
-    //byte currentBankDisplay = get_currentBank_Display(0);
-    //byte currentPatternDisplay = get_currentPattern_Display(0);
 
     byte realTrack = selected_Track + step_seq_ab[selected_Track];
     uint8_t byteToRead = 0;

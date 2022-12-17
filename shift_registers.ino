@@ -47,8 +47,18 @@ unsigned int decimalValue_from_pads() {
   for (byte i = DATA_WIDTH - 1, j = 0; i > 3; i--) {
     decimalValue_pads += trigsIn_BitVal[j++] << i;
   }
+  
   return decimalValue_pads;
 }
+
+
+/*unsigned int decimalValue_from_pads2() {
+  unsigned int decimalValue_pads = 0;
+  for (byte i = DATA_WIDTH - 1, j = 0; i > 3; i--) {
+    decimalValue_pads += trigsIn_BitVal[j++] << i;
+  }
+  return decimalValue_pads;
+}*/
 
 
 unsigned int decimalValue_from_chromaMode() {
@@ -62,7 +72,7 @@ unsigned int decimalValue_from_chromaMode() {
 
   unsigned int decimalValue_chroma = 0;
 
-  for (int i = DATA_WIDTH - 1, j = 0; i > 3; i--) {  //   int i = 15,   j = 0;    i > 3;    i--
+  for (byte i = DATA_WIDTH - 1, j = 0; i > 3; i--) {  //   int i = 15,   j = 0;    i > 3;    i--
     decimalValue_chroma += trigsIn_Chroma_BitVal[j++] << i;
   }
 
@@ -90,23 +100,23 @@ void make595Play_Trigs_from_Sequence(unsigned long decimVal_curStep, unsigned lo
 }
 
 
-void make595Play_Trigs_from_Pads(unsigned long x, unsigned long butMicro) {
-  //if (timeFlag_pads) {
-  shiftOutTrigs(x);
+void make595Play_Trigs_from_Pads(unsigned long playVal, unsigned long stopVal, unsigned long butMicro) {
+  if (timeFlag_pads) {
+    shiftOutTrigs(playVal);
 
-  if ((micros() - butMicro) >= trig_DURATION) {
-    //timeFlag_pads = false;
-    shiftOutTrigs(0);
+    if ((micros() - butMicro) >= trig_DURATION) {
+      timeFlag_pads = false;
+      shiftOutTrigs(stopVal);
+    }
   }
-  //}
 }
 
 
-void make595Play_Trigs_from_ChromaMode(unsigned long x, unsigned long butMicro) {
+void make595Play_Trigs_from_ChromaMode(unsigned long x, unsigned long butMicro, bool isGate) {
   if (timeFlag_pads) {
     shiftOutTrigs(x);
 
-    if ((micros() - butMicro) >= trig_DURATION) {
+    if (!isGate && ((micros() - butMicro) >= trig_DURATION)) {
       timeFlag_pads = false;
       shiftOutTrigs(0);
     }

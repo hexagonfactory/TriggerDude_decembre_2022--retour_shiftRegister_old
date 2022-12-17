@@ -1,23 +1,25 @@
+void LFO_reset_counter(bool lfoNum, bool loopReset) {
+  LFO[lfoNum].counter = 0;                        // TESTER METTRE APRES INSTRUCTION SUIVANTE
+
+  if (get_LFO_wave_Display(lfoNum) == 4)
+    LFO[lfoNum].squareVal = (loopReset) ? square[0] : ((LFO[lfoNum].squareVal == square[0]) ? square[1] : square[0]);
+
+  else if (get_LFO_wave_Display(lfoNum) == 5)
+    LFO[lfoNum].randomVal = RandomNum.randrange(300, 52200, 200); // from 300 to 52200
+}
+
 
 void LFO_1_tick() {
   LFO[0].counter++;
-
-  if (LFO[0].counter >= LFO_WAVE_RESOLUTION) {
-    LFO[0].counter = 0;                       // TESTER METTRE APRES INSTRUCTION SUIVANTE
-    if (get_LFO_wave_Display(0) == 4)
-      LFO[0].randomVal = RandomNum.randrange(300, 52200, 200); // from 300 to 52200
-  }
+  if (LFO[0].counter >= LFO_WAVE_RESOLUTION)
+    LFO_reset_counter(0, 0);
 }
 
 
 void LFO_2_tick() {
   LFO[1].counter++;
-
-  if (LFO[1].counter >= LFO_WAVE_RESOLUTION) {
-    LFO[1].counter = 0;
-    if (get_LFO_wave_Display(1) == 4)
-      LFO[1].randomVal = RandomNum.randrange(300, 52200, 200);
-  }
+  if (LFO[1].counter >= LFO_WAVE_RESOLUTION)
+    LFO_reset_counter(1, 0);
 }
 
 
@@ -31,7 +33,6 @@ void increment_arpCounter() {
 
 
 unsigned long calc_step_micros() {
-  //step_micros = round(3750000 / bank[currentBank].pattern[currentPattern].internal_BPM);
   step_micros = round(3750000.0 / bank[currentBank].pattern[currentPattern].internal_BPM);
   return step_micros;
 }
@@ -60,7 +61,10 @@ void clockBeats() {
     last_clock_time_16PPQN = clock_time_16PPQN;
     last_global_Step_16PPQN = global_Step_16PPQN;
 
-    if (PLAY_pushed) { 
+    if (PLAY_pushed) {
+      currentBankDisplay = get_currentBank_Display(0);
+      currentPatternDisplay = get_currentPattern_Display(0);
+
       global_Step_16PPQN++;
 
       for (byte track = 0; track < TRACKS; ++track) {
@@ -143,8 +147,12 @@ void manage_Reset_Things() {
     }
 
     global_Step_Counter16 = 0; //global_Step_Counter16 = bank[currentBank].pattern[currentPattern].firstStep ??
-    LFO[0].counter = 0;
-    LFO[1].counter = 0;
+
+    for (byte lfoNum = 0; lfoNum < 2; ++lfoNum) {
+      LFO_reset_counter(lfoNum, 1);
+    }
+
+
     if (songMode_Activated && digitalRead(resetInPin) == LOW)
       currentPattern = bank[currentBank].songPatterns[0];
   }

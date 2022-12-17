@@ -95,8 +95,6 @@ void drawPage_mainScreen() {
     u8g2.print("TRK");
 
     display_enc1_dial("RATE /", 1);
-
-
   }
 
 
@@ -130,7 +128,6 @@ void drawPage_mainScreen() {
 
     if (ALT_pushed) {
       update_screen_ALT_BTN = true; // on relance if (update_screen_ALT_BTN)
-
     }
 
     if (!update_screen_INIT)
@@ -242,6 +239,7 @@ void drawPage_Settings() {
 
     u8g2.drawHLine(0, 9, 128);
     draw_Settings_list();
+    print_Setting_scrollBar();
     u8g2.drawHLine(0, 46, 128);
 
     if (!update_screen_INIT) {
@@ -943,164 +941,6 @@ void drawPage_fillState() {
   update_on_INIT();
 }
 
-
-/*void drawPage_chromaMode() {
-  if (update_screen_INIT) {
-    set_default_UI_header("CHROMA MODE");
-    //drawBloc_selected_Track(48, 14, 1);
-  }
-
-
-  if (update_screen_TOP) {
-    if (!update_screen_INIT)
-      u8g2.clearBuffer();
-
-    display_global_Step_4PPQN();
-
-    update_screen_TOP = false;
-    if (!update_screen_INIT)
-      u8g2.updateDisplayArea(10, 0, 6, 1);
-  }
-
-
-
-
-  if (!trigger_cvOutReassign_process) {
-    if (chromaMode_Arp_params == 0)
-      drawBloc_selected_Track(68, 24, 1);
-    displayChromaMode_title();
-  }
-
-
-  if (chromaMode_KBoard) {
-    if (glideMode) {
-      draw_glide_UI();
-      display_enc1_dial("LENGTH", 1);
-      display_enc1_click("EXIT");
-    }
-
-    else {
-      displayOctaveValue();
-      display_enc1_dial("OCTAVE", 1);
-      display_enc1_click("GLIDE");
-    }
-  }
-
-  else if (chromaMode_Arp) {
-    if (chromaMode_Arp_params == 0) {
-      displayOctaveValue();
-      display_enc1_dial("OCTAVE", 1);
-      display_enc1_click("PARAMS");
-    }
-
-    else {
-      draw_arp_UI();
-      display_enc1_dial("PARAM", 1);
-      display_enc1_click("EXIT");
-    }
-
-    if (arp_latch)
-      display_enc2_click(75, "LATCH OFF");
-    else
-      display_enc2_click(80, "LATCH ON");
-
-
-    u8g2.setCursor(50, 22);
-    u8g2.print(arpSteps);
-    u8g2.setCursor(50, 32);
-    u8g2.print(arp_latch_active);
-
-    u8g2.setCursor(50, 42);
-    u8g2.print(arp_Style_Cursor);
-    u8g2.setCursor(50, 52);
-    u8g2.print(scan_pads_Arp);
-    u8g2.setCursor(50, 62);
-    u8g2.print(needToCheck_Arp);
-  }
-
-  else if (chromaMode_Transpose) {
-    displayTransposeValue();
-    display_enc1_dial("OCTAVE", 1);
-
-    if (bank[currentBank].pattern[currentPattern].transposeValue[selected_Track + bank[currentBank].pattern[currentPattern].AB_State[selected_Track]] != 0)
-      display_enc1_click("RESET");
-  }
-
-  else if (chromaMode_Glide) {
-    byte currentBankDisplay = get_currentBank_Display(0);
-    byte currentPatternDisplay = get_currentPattern_Display(0);
-
-    u8g2.setCursor(3, 21);
-    u8g2.print("MODE:");
-    if (GLIDE_paramSelection_cursor == 0) {
-      u8g2.drawFrame(0, 12, 64, 13);
-      if (GLIDE_paramSelection_active) {
-        u8g2.drawBox(32, 14, 30, 9);
-        setFontMode_BG(0);
-      }
-    }
-
-    u8g2.setCursor(34, 21);
-    u8g2.print(chromaMode_Glide_params_labels[bank[currentBankDisplay].pattern[currentPatternDisplay].glide_mode[selected_Track]]);
-    if (GLIDE_paramSelection_cursor == 0)
-      setFontMode_BG(1);
-
-    u8g2.setCursor(3, 34);
-    u8g2.print("TIME:");
-    if (GLIDE_paramSelection_cursor == 1) {
-      u8g2.drawFrame(0, 25, 64, 13);
-      if (GLIDE_paramSelection_active) {
-        u8g2.drawBox(32, 27, 30, 9);
-        setFontMode_BG(0);
-      }
-    }
-    u8g2.setCursor(44, 34);
-    u8g2.print(bank[currentBankDisplay].pattern[currentPatternDisplay].glide_steps[selected_Track]);
-    if (GLIDE_paramSelection_cursor == 1)
-      setFontMode_BG(1);
-
-
-    if (GLIDE_paramSelection_active) {
-      display_enc1_dial("VALUE", 1);
-      display_enc1_click("OK");
-    }
-    else {
-      display_enc1_dial("PARAM", 1);
-      display_enc1_click("SELECT");
-    }
-  }
-
-  else if (chromaMode_CVOutSelect) {
-    if (!trigger_cvOutReassign_process) {
-      drawBloc_chromaSettings_CVOutSelect();
-      display_enc1_dial("OUTPUT", 1);
-      confirmed_CvOutReassign = 0;
-      //display_enc1_click("ASSIGN");
-    }
-
-    else {
-      u8g2.setCursor(15, 34);
-      u8g2.print("REASSIGN TO TRACK ");
-      u8g2.print(selected_Track);
-      u8g2.print(" ?");
-      display_enc1_click("NO");
-      display_enc2_click(105, "YES");
-    }
-  }
-
-  if (!trigger_cvOutReassign_process) {
-    if (chromaMode_Arp_params == 0)
-      display_enc2_dial(100, "MODE", 1);
-    else
-      display_enc2_dial(95, "VALUE", 1);
-  }
-
-
-  if (update_screen_INIT) {
-    u8g2.sendBuffer();
-    update_screen_INIT = false;
-  }
-  }*/
 
 void drawPage_chromaMode_KBoard() {
   if (update_screen_INIT) {
@@ -2122,16 +1962,16 @@ void display_global_Step_4PPQN() {
 
 
 void display_CurrentBank(byte pix_x, byte pix_y) {     //  0 - 12 - 27 - 14
-  byte currentBankDisplay = get_currentBank_Display(1);
+  //byte currentBankDisplay = get_currentBank_Display(1);
   draw_3D_box(pix_x, pix_y, 27, 14, "BANK", 13);
-  u8g2.print(currentBankDisplay);
+  u8g2.print(get_currentBank_Display(1));
 }
 
 
 void display_CurrentPattern(byte pix_x, byte pix_y) {
-  byte currentPatternDisplay = get_currentPattern_Display(1);
+  //byte currentPatternDisplay = get_currentPattern_Display(1);
   draw_3D_box(pix_x, pix_y, 42, 14, "PATTERN", 13);
-  u8g2.print(currentPatternDisplay);
+  u8g2.print(get_currentPattern_Display(1));
 }
 
 
@@ -2154,8 +1994,6 @@ void draw_pitch_UI() {
 
 
 void draw_glide_UI() {
-  byte currentBankDisplay = get_currentBank_Display(0);
-  byte currentPatternDisplay = get_currentPattern_Display(0);
   u8g2.drawHLine(0, 9, 128);
 
   u8g2.setCursor(6, 24);
@@ -2168,9 +2006,6 @@ void draw_glide_UI() {
 
 
 void draw_Chroma_GLIDE_UI() {
-  byte currentBankDisplay = get_currentBank_Display(0);
-  byte currentPatternDisplay = get_currentPattern_Display(0);
-
   u8g2.drawHLine(0, 9, 128);
 
   // MODE

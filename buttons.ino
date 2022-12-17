@@ -2,7 +2,7 @@ void reset_modes_on_screenChange(/*byte currentScreen*/) {
   //u8g2.clearBuffer();
   ALT_pushed = false;
   recMode = 0;
-  pitchMode = 0; 
+  pitchMode = 0;
   MICROTIMING = 0;
   glideMode = 0;
   Trigs_Undo_enable = 0;
@@ -81,6 +81,9 @@ void detect_remoteBtnsPush() {
           if (PLAYING)
             PLAYING = 0;
         }
+
+        if (!PLAYING)
+          shiftOutTrigs(0);
       }
 
       //update_screen = true;

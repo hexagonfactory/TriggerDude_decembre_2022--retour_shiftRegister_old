@@ -1,12 +1,7 @@
 /*
-
   Changé le fichier /Users/benjamincochois/Library/Arduino15/packages/STMicroelectronics/hardware/stm32/2.2.0/system/Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h
   ligne 1881 -> commenté la variable Register non utilisée par library STM32 (bug console)
-
 */
-
-
-// ancien rgb ROUGE : 219, 0, 37
 
 const char FW_VERSION[] = "1.0.1";
 
@@ -15,17 +10,16 @@ const char FW_VERSION[] = "1.0.1";
 #include <Adafruit_NeoPixel.h>
 #include <U8g2lib.h>
 #include "DAC8554.h"
-
 #include <Prandom.h>
+
 Prandom RandomNum;
 
 #define FLASH_BASE_ADDRESS  0x08060000
 #define FLASH_PAGE_SIZE     ((uint32_t)(40*1024))
 #include <FlashStorage_STM32.h>
 
-
-#define TIMER_INTERRUPT_DEBUG         0
-#define _TIMERINTERRUPT_LOGLEVEL_     0
+#define TIMER_INTERRUPT_DEBUG      0
+#define _TIMERINTERRUPT_LOGLEVEL_  0
 #include "STM32TimerInterrupt.h"
 
 STM32Timer CLOCK_INT_timer(TIM2);
@@ -39,7 +33,7 @@ STM32Timer GLIDE_timer(TIM5);
 #define dacClock_sck      PB13
 #define dacIn_mosi        PB15
 DAC8554 Dac(dacIn_mosi, dacClock_sck, dacSync_nss);
-//DAC8554 Dac(dacSync_nss);
+//DAC8554 Dac(dacSync_nss, 1); //  (address 1 = SPI 2) ??
 
 #define clockInPin         PB7
 #define resetInPin         PB4
@@ -307,6 +301,8 @@ bool MICROTIMING = 0;
 byte  currentBank = 0;
 byte  currentBankLED = 0;         // A ENLEVER QUAND STOCKAGE SUFFISANT POUR BANKS
 byte  currentPattern = 0;
+byte  currentBankDisplay = currentBank;
+byte  currentPatternDisplay = currentPattern;
 bool  patternChange_triggered = false;
 byte  nextPattern = 0;
 
@@ -469,23 +465,6 @@ const uint16_t rampUp[LFO_WAVE_RESOLUTION] {
   48553, 48756, 48960, 49164, 49367, 49571, 49774, 49978, 50182, 50385, 50589, 50792, 50996, 51200, 51403, 51607, 51810, 52014, 52200
 };
 
-
-
-/*const uint16_t rampDown[LFO_WAVE_RESOLUTION] {
-  52200, 52014, 51810, 51607, 51403, 51200, 50996, 50792, 50589, 50385, 50182, 49978, 49774, 49571, 49367, 49164, 48960, 48756, 48553, 48349, 48146,
-  47942, 47738, 47535, 47331, 47128, 46924, 46720, 46517, 46313, 46110, 45906, 45702, 45499, 45295, 45092, 44888, 44684, 44481, 44277, 44074, 43870,
-  43666, 43463, 43259, 43056, 42852, 42648, 42445, 42241, 42038, 41834, 41630, 41427, 41223, 41020, 40816, 40612, 40409, 40205, 40002, 39798, 39594,
-  39391, 39187, 38984, 38780, 38576, 38373, 38169, 37966, 37762, 37558, 37355, 37151, 36948, 36744, 36540, 36337, 36133, 35930, 35726, 35522, 35319,
-  35115, 34912, 34708, 34504, 34301, 34097, 33894, 33690, 33486, 33283, 33079, 32876, 32672, 32468, 32265, 32061, 31858, 31654, 31450, 31247, 31043,
-  30840, 30636, 30432, 30229, 30025, 29822, 29618, 29414, 29211, 29007, 28804, 28600, 28396, 28193, 27989, 27786, 27582, 27378, 27175, 26971, 26768,
-  26564, 26360, 26157, 25953, 25750, 25546, 25342, 25139, 24935, 24732, 24528, 24324, 24121, 23917, 23714, 23510, 23306, 23103, 22899, 22696, 22492,
-  22288, 22085, 21881, 21678, 21474, 21270, 21067, 20863, 20660, 20456, 20252, 20049, 19845, 19642, 19438, 19234, 19031, 18827, 18624, 18420, 18216,
-  18013, 17809, 17606, 17402, 17198, 16995, 16791, 16588, 16384, 16180, 15977, 15773, 15570, 15366, 15162, 14959, 14755, 14552, 14348, 14144, 13941,
-  13737, 13534, 13330, 13126, 12923, 12719, 12516, 12312, 12108, 11905, 11701, 11498, 11294, 11090, 10887, 10683, 10480, 10276, 10072, 9869, 9665,
-  9462, 9258, 9054, 8851, 8647, 8444, 8240, 8036, 7833, 7629, 7426, 7222, 7018, 6815, 6611, 6408, 6204, 6000, 5797, 5593, 5390, 5186, 4982, 4779,
-  4575, 4372, 4168, 3964, 3761, 3557, 3354, 3150, 2946, 2743, 2539, 2336, 2132, 1928, 1725, 1521, 1318, 1114, 910, 707, 503, 300
-  };*/
-
 const uint16_t sine[LFO_WAVE_RESOLUTION] {
   26250, 26887, 27523, 28159, 28794, 29427, 30058, 30686, 31313, 31936, 32555, 33171, 33783, 34390, 34992, 35589, 36181, 36766, 37345, 37917, 38483, 39041,
   39591, 40133, 40667, 41192, 41708, 42215, 42713, 43200, 43677, 44144, 44599, 45044, 45478, 45900, 46310, 46708, 47093, 47466, 47827, 48174, 48508, 48829,
@@ -519,23 +498,27 @@ const uint16_t triangle[LFO_WAVE_RESOLUTION] {
   19763, 20168, 20573, 20979, 21384, 21790, 22195, 22601, 23006, 23412, 23817, 24223, 24628, 25034, 25439, 25845
 };
 
+const uint16_t square[2] {
+  52200, 300
+};
+
 
 
 //EEPROM
-#define EEPROM_INIT  0            // 0x08060000 -- 134610944 -- 1 BIT pour savoir si EEPROM Init ou non
-#define BANK_ADR_0   1            // 0x08060001 -- 134610945 -- PATTERNS * BIT (12)
-#define PATT_ADR_0   16           // 0x08060010 -- 134610960
-#define PATT_ADR_1   4766         // 0x08060DF8 --  
-#define PATT_ADR_2   9516         // 0x08061BE0 -- 
-#define PATT_ADR_3   14266        // 0x080629C8 -- 
-#define PATT_ADR_4   19016        // 0x080637B0 -- 
-#define PATT_ADR_5   23766        // 0x08064598 -- 
-#define PATT_ADR_6   28516        // 0x08065380 -- 
-#define PATT_ADR_7   33266        // 0x08066168 -- 
-/*#define PATT_ADR_8   38016        // 0x08066F50 --
-  #define PATT_ADR_9   42766        // 0x08067D38 --
-  #define PATT_ADR_10  47516        // 0x08068B20 --
-  #define PATT_ADR_11  52266        // 0x08069908 --*/
+#define EEPROM_INIT  0            // 1 BIT pour savoir si EEPROM Init ou non
+#define BANK_ADR_0   1            // PATTERNS * BIT
+#define PATT_ADR_0   16
+#define PATT_ADR_1   4816
+#define PATT_ADR_2   9616
+#define PATT_ADR_3   14416
+#define PATT_ADR_4   19216
+#define PATT_ADR_5   24016
+#define PATT_ADR_6   28816
+#define PATT_ADR_7   33616
+/*#define PATT_ADR_8   38416
+  #define PATT_ADR_9   43216
+  #define PATT_ADR_10  48016
+  #define PATT_ADR_11  52816*/  // jusqu'au bit 57616 en comptant la taille du pattern #11
 
 const int patterns_addresses[PATTERNS] {
   PATT_ADR_0,
@@ -555,18 +538,19 @@ const int patterns_addresses[PATTERNS] {
 
 // LFOs
 const char* const LFOs_output[] = {"CvOut1", "CvOut2", "CvOut3", "CvOut4"};
-const char* const LFOs_waves[] = {"RAMPUP", "RAMPDN", "SINE", "TRI", "RANDOM"};
+const char* const LFOs_waves[] = {"RAMPUP", "RAMPDN", "SINE", "TRI", "SQUARE", "RANDOM"};
 const char* const LFOs_rates[] = {"/8", "/6", "/4", "/3", "/2", "=", "x2", "x3", "x4", "x6", "x8", "x16", "x32"};
 
 struct lfo_Params {
   unsigned long rate_micros = (step_micros * 4) / LFO_WAVE_RESOLUTION;
   unsigned int  counter = 0;
-  unsigned int randomVal;
+  unsigned int  squareVal = square[0];
+  unsigned int  randomVal;
 } LFO[2];  // ex. LFO[0].counter;
 
 
 // CVinputs
-const char* const cvIn_modulation_Target[] = {"PATTERN", "BANK", "STEP", "PAT.LGTH", "1stStep", "L1 WAVE", "L1 RATE", "L2 WAVE", "L2 RATE"};
+const char* const cvIn_modulation_Target[] = {"PATTERN", "BANK", "STEP", "PAT.LEN", "1stStep", "L1 WAVE", "L1 RATE", "L2 WAVE", "L2 RATE"};
 
 struct CVin_params {
   bool  enable = 0;
@@ -577,7 +561,6 @@ struct CVin_params {
 
 // DACs
 struct dac_Params {
-  //bool            timeFlag_glide;
   bool            glideActive;
   bool            gliding;
   bool            glide_dir;
@@ -641,7 +624,7 @@ struct patternStructure {
   bool    allMute_active;                             // 1
   bool    solo_active;                                // 1
   bool    fill_active;                                // 1
-};                                                    // total = 4710  -> (on arrondi la taille d'un pattern à 4750 pour le stockage EEPROM)
+};                                                    // total = 4710  -> (on arrondi la taille d'un pattern à 4800 pour le stockage EEPROM)
 //bank[currentBank].pattern[currentPattern].track_isGate[TRACKS];
 
 
@@ -649,8 +632,8 @@ struct patternStructure {
 struct bankStructure {
   bool   notEmpty_Pattern[PATTERNS];                  // 12
   byte   songPatterns[16];                            // 16
-  struct patternStructure pattern[PATTERNS];          // 3549*12 = 42588
-} bank[BANKS];                                        // total = 42616 (42588 + 12 + 16)
+  struct patternStructure pattern[PATTERNS];          // 4750*12 = 57000
+} bank[BANKS];                                        // total = 57028 (57000 + 12 + 16)
 
 // arrondi à 42928 (3575 * 12) + 12 + 16
 
@@ -726,7 +709,7 @@ bool update_screen_INIT = true;
 bool update_screen_TOP = true;
 bool update_screen_POTS_DIAL_L = true;
 bool update_screen_POTS_DIAL_R = true;
-bool update_screen_POTS_CLK_L = true; 
+bool update_screen_POTS_CLK_L = true;
 bool update_screen_POTS_CLK_R = true;
 bool update_screen_PADS = true;
 bool update_screen_ALT_BTN = true;
@@ -873,6 +856,9 @@ void setup(void) {
   //LFOs_enable_disable();
   //get_RollRateCalc();
 
+  for (byte dac = 0; dac < 4; ++dac) {
+    Dac.setPowerDown(dac, DAC8554_POWERDOWN_1K);
+  }
 
   startUpSequence();
 
@@ -891,7 +877,7 @@ void loop(void) {
 
   make595Play_Trigs_from_Sequence(decimalValue_seq, decimalValue_seq2, clock_time_16PPQN);
 
-  makeDACplayNotes_from_Sequences();
+  makeDACplayNotes();
 
   makeStripDisplayRemote();
 

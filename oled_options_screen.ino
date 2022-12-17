@@ -3,16 +3,22 @@ void print_Setting_title(byte param_Pos, byte param_Title, bool paramHighlight) 
   if (paramHighlight)
     setFontMode_BG(0);
   u8g2.setFont(triggerDude_big_font);
-  u8g2.setCursor(1, y);
-  u8g2.print(settings_titles[param_Title]); 
+  u8g2.setCursor(6, y);
+  u8g2.print(settings_titles[param_Title]);
   u8g2.setCursor(85, y);
+}
+
+
+void print_Setting_scrollBar() {
+  u8g2.drawFrame(0, 12, 3, 32);
+  u8g2.drawBox(1, settings_titles_Cursor + 13, 1, 7);
 }
 
 
 void draw_Settings_list() {
   switch (settings_titles_Cursor) {
     case 0: // LOOP MODE
-      u8g2.drawBox(0, 12, 128, 11);
+      u8g2.drawBox(4, 12, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor, 1);
       (bank[currentBank].pattern[currentPattern].tracksRetrig) ? u8g2.print("RETRIG") : u8g2.print("FREE");
@@ -28,9 +34,8 @@ void draw_Settings_list() {
       u8g2.print(cvIn_modulation_Target[CVin[0].dest_Cursor]);
       break;
 
-
     case 1: // FirstStep
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       (bank[currentBank].pattern[currentPattern].tracksRetrig) ? u8g2.print("RETRIG") : u8g2.print("FREE");
@@ -48,9 +53,8 @@ void draw_Settings_list() {
       display_enc2_click(88, (enc2_Range_10)  ? "+/- 1" : "+/- 10");
       break;
 
-
     case 2: // CVin_1
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(bank[currentBank].pattern[currentPattern].firstStep + 1);
@@ -65,9 +69,8 @@ void draw_Settings_list() {
       display_enc2_click(70, (CVin[0].enable && (CVin[0].dest_Cursor == CVin[0].dest_Selected)) ? "DEACTIVATE" : "  ACTIVATE");
       break;
 
-
     case 3: // CVin_2
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(cvIn_modulation_Target[CVin[0].dest_Cursor]);
@@ -82,9 +85,8 @@ void draw_Settings_list() {
       display_enc2_click(70, (CVin[1].enable && (CVin[1].dest_Cursor == CVin[1].dest_Selected))  ? "DEACTIVATE" : "  ACTIVATE");
       break;
 
-
     case 4: // replicateBars
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(cvIn_modulation_Target[CVin[1].dest_Cursor]);
@@ -97,9 +99,8 @@ void draw_Settings_list() {
       (SYNC_mode_internal) ? u8g2.print("INT") : u8g2.print("EXT");
       break;
 
-
     case 5: // SYNC Mode
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       (replicateBars) ? u8g2.print("ON") : u8g2.print("OFF");
@@ -113,9 +114,8 @@ void draw_Settings_list() {
       (SYNC_mode_internal) ? u8g2.print(bank[currentBank].pattern[currentPattern].internal_BPM) : u8g2.print("--");
       break;
 
-
     case 6: // set BPM
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       //u8g2.setCursor(85, 22);
@@ -138,9 +138,8 @@ void draw_Settings_list() {
       }
       break;
 
-
     case 7: // set ClkIn DIV
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       (SYNC_mode_internal) ? u8g2.print(bank[currentBank].pattern[currentPattern].internal_BPM) : u8g2.print("--");
@@ -163,9 +162,8 @@ void draw_Settings_list() {
       }
       break;
 
-
     case 8: // set ClkOut DIV
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       if (bank[currentBank].pattern[currentPattern].clkIn_Div == 1)
@@ -188,9 +186,8 @@ void draw_Settings_list() {
       (bank[currentBank].pattern[currentPattern].quantizeBeat == 1) ? u8g2.print("ON") : u8g2.print("OFF");
       break;
 
-
     case 9: // set QUANTIZE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       if (bank[currentBank].pattern[currentPattern].clkOut_Div == 1)
         u8g2.print("=");
@@ -209,9 +206,8 @@ void draw_Settings_list() {
       display_LFO_CvOut_Text(0);
       break;
 
-
     case 10: // set SHUFFLE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
 
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       (bank[currentBank].pattern[currentPattern].quantizeBeat == 1) ? u8g2.print("ON") : u8g2.print("OFF");
@@ -225,11 +221,8 @@ void draw_Settings_list() {
       u8g2.print(LFOs_output[bank[currentBank].pattern[currentPattern].lfo_dest[0]]);
       break;
 
-
-
-
     case 11: // set LFO 1 DEST
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(bank[currentBank].pattern[currentPattern].shuffle);
 
@@ -244,7 +237,7 @@ void draw_Settings_list() {
       break;
 
     case 12: // set LFO 1 WAVE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(LFOs_output[bank[currentBank].pattern[currentPattern].lfo_dest[0]]);
 
@@ -257,7 +250,7 @@ void draw_Settings_list() {
       break;
 
     case 13: // set LFO 1 RATE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(LFOs_waves[bank[currentBank].pattern[currentPattern].lfo_wave[0]]);
 
@@ -270,7 +263,7 @@ void draw_Settings_list() {
       break;
 
     case 14: // set LFO 1 GAIN
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(LFOs_rates[bank[currentBank].pattern[currentPattern].lfo_rate[0]]);
 
@@ -285,7 +278,7 @@ void draw_Settings_list() {
       break;
 
     case 15: // set LFO 1 PHASE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(bank[currentBank].pattern[currentPattern].lfo_gain[0]);
 
@@ -301,7 +294,7 @@ void draw_Settings_list() {
       break;
 
     case 16: // set LFO 2 DEST
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(bank[currentBank].pattern[currentPattern].lfo_phase[0]);
 
@@ -316,7 +309,7 @@ void draw_Settings_list() {
       break;
 
     case 17: // set LFO 2 WAVE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(LFOs_output[bank[currentBank].pattern[currentPattern].lfo_dest[1]]);
 
@@ -329,7 +322,7 @@ void draw_Settings_list() {
       break;
 
     case 18: // set LFO 2 RATE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(LFOs_waves[bank[currentBank].pattern[currentPattern].lfo_wave[1]]);
 
@@ -342,7 +335,7 @@ void draw_Settings_list() {
       break;
 
     case 19: // set LFO 2 GAIN
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(LFOs_rates[bank[currentBank].pattern[currentPattern].lfo_rate[1]]);
 
@@ -357,7 +350,7 @@ void draw_Settings_list() {
       break;
 
     case 20: // set LFO 2 PHASE
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(bank[currentBank].pattern[currentPattern].lfo_gain[1]);
 
@@ -373,7 +366,7 @@ void draw_Settings_list() {
       break;
 
     case 21: // PATTERN CHANGE QUANTIZED
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       u8g2.print(bank[currentBank].pattern[currentPattern].lfo_phase[1]);
 
@@ -386,7 +379,7 @@ void draw_Settings_list() {
       break;
 
     case 22: // TRIG DURATION
-      u8g2.drawBox(0, 23, 128, 11);
+      u8g2.drawBox(4, 23, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 1, 0);
       (patternChange_Quantized) ? u8g2.print("ON") : u8g2.print("OFF");
 
@@ -399,7 +392,7 @@ void draw_Settings_list() {
       break;
 
     case 23: // LED BRIGHTNESS
-      u8g2.drawBox(0, 34, 128, 11);
+      u8g2.drawBox(4, 34, 128, 11);
       print_Setting_title(1, settings_titles_Cursor - 2, 0);
       (patternChange_Quantized) ? u8g2.print("ON") : u8g2.print("OFF");
 
@@ -443,10 +436,10 @@ void print_trig_dur() {
   /*if (trig_durations_Cursor <= 1) {
     u8g2.print(trig_DURATION);
     u8g2.print("us");
-  }
-  else {*/
-    u8g2.print(trig_DURATION / 1000);
-    u8g2.print("ms");
+    }
+    else {*/
+  u8g2.print(trig_DURATION / 1000);
+  u8g2.print("ms");
   //}
 }
 

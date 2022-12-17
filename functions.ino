@@ -99,9 +99,6 @@ byte get_track_step_PITCH(byte track, bool step_advance) {
 }
 
 void read_Sequence_Trigs() {
-  byte currentBankDisplay = get_currentBank_Display(0);
-  byte currentPatternDisplay = get_currentPattern_Display(0);
-
   for (byte track = 0; track < TRACKS; ++track) {
     bool can_Play = true;
     uint8_t byteToRead_solo = (track + 12) / 8;
@@ -163,8 +160,6 @@ void read_Sequence_Trigs() {
 
 
 void read_Sequence_Trigs_next() {
-  byte currentBankDisplay = get_currentBank_Display(0);
-  byte currentPatternDisplay = get_currentPattern_Display(0);
   bool trigsOut_BitVal2[DATA_WIDTH];
 
   for (byte track = 0; track < TRACKS; ++track) {
@@ -391,19 +386,6 @@ byte modulate_lfo2_Rate(byte cvInNum) {
   return modulated_lfo2Rate;
 }
 
-/*
-  byte modulate_rollRate(bool cvInNum) {
-  int cv_Input_Value = analogRead(cvInNum);
-  byte arrSize = sizeof(rollRates) / sizeof(rollRates[0]);
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, 0, arrSize); // rollRates[10] = {1, 2, 3, 4, 6, 8, 12, 16, 32, 64};  rollRates_cursor
-
-  modulated_rollRate = cv_Input_Scaled;
-
-  if (modulated_rollRate > arrSize) modulated_rollRate = arrSize;
-
-  return modulated_rollRate;
-  }
-*/
 
 void modulateParams(byte paramSel_1, byte paramSel_2) {
   if (CVin[0].enable) {

@@ -12,11 +12,16 @@ void set_UI_Config() {
 
       if (enc1_clk)
         detect_rollOnOff();
- 
+
       makeStripDisplay_Trigs(playE, 0);
 
-      if (fired_1)
-        set_rollRate();
+      if (fired_1) {
+        if (!ALT_pushed)
+          set_rollRate();
+
+        else
+          set_track_LOOP_DIR();
+      }
 
       if (!ALT_pushed && enc2_clk) {
         detect_lockpattern_LengthOnOff();
@@ -140,7 +145,7 @@ void set_UI_Config() {
       if (!SYNC_mode_internal)
         get_Bpm();
 
-      get_RollRateCalc();
+      //get_RollRateCalc();
 
       //drawPage_mainScreen();
       if (enc1_clk)
@@ -713,7 +718,7 @@ void mainSettings_encoders_events() {
 
     case 23: // LED BRIGHTNESS
       if (fired_2)
-        set_led_brightness();
+        set_pads_brightness();
       break;
   }
 }

@@ -85,10 +85,9 @@ U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R0, OLED_CS, OLED_DC, OLED_RESET
 //NEOPIXEL
 #define LED_DATA          PB9
 #define LED_COUNT         15
-//#define BRIGHTNESS        50
 Adafruit_NeoPixel strip(LED_COUNT, LED_DATA, NEO_GRB + NEO_KHZ800);
 
-uint8_t led_brightness = 50;
+uint8_t pads_brightness = 50;
 
 //BPM
 #define MIN_BPM 20
@@ -209,11 +208,8 @@ const uint8_t triggerDude_small_font[1387] U8G2_FONT_SECTION("triggerDude_small_
 
 uint16_t  last_pinValues;
 uint16_t  current_pinValues;
-bool      keypad_pressed;
-
 
 const uint8_t masks[8] = {1, 2, 4, 8, 16, 32, 64, 128};
-
 
 //COLORS
 const uint32_t playA = strip.Color(17, 201, 168);// normal mode trigs PLAYING
@@ -281,7 +277,6 @@ byte      last_global_Step_4PPQN = global_Step_4PPQN;
 byte      global_Step_Counter16 = 0;
 bool      displayFirstStep_1 = 1;
 
-
 float  bpm = 120.0; // default BPM
 //uint16_t bpm = 120;
 
@@ -294,6 +289,7 @@ unsigned long  last_clock_time_16PPQN = clock_time_16PPQN;
 bool  PLAYING = 0;
 bool  PLAY_pushed = 0;
 bool  recMode = 0;
+bool  loop_dir_right[TRACKS];
 
 bool MICROTIMING = 0;
 
@@ -587,6 +583,7 @@ struct patternStructure {
   bool    glide_mode[TRACKS];                         // 12
   byte    glide_steps[TRACKS];                        // 12 /* nbr de steps : longueur portamento pour chaque cvOut track (4) => 0 à 16 */
   byte    fill_rate[TRACKS];                          // 12
+  byte    loop_dir[TRACKS];                           // 12
   byte    pattern_Length;                             // 1    en 4PPQN
   byte    track_Length[TRACKS];                       // 12   en 4PPQN
   byte    AB_State[TRACKS];                           // 12
@@ -775,7 +772,7 @@ void setup(void) {
 
   strip.begin();
   strip.show();
-  strip.setBrightness(led_brightness);
+  strip.setBrightness(pads_brightness);
 
   Dac.begin();
 

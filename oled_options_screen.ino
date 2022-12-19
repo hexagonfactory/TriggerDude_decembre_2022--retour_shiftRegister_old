@@ -388,7 +388,7 @@ void draw_Settings_list() {
       setFontMode_BG(1);
 
       print_Setting_title(3, settings_titles_Cursor + 1, 0);
-      u8g2.print(led_brightness);
+      u8g2.print(pads_brightness);
       break;
 
     case 23: // LED BRIGHTNESS
@@ -400,7 +400,7 @@ void draw_Settings_list() {
       print_trig_dur();
 
       print_Setting_title(3, settings_titles_Cursor, 1);
-      u8g2.print(led_brightness);
+      u8g2.print(pads_brightness);
       setFontMode_BG(1);
       break;
   }

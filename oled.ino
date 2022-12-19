@@ -5,7 +5,7 @@ void drawPage_startupScreen() {
 
   u8g2.setFont(triggerDude_small_font);
   u8g2.setCursor(14, 60);
-  u8g2.print(FW_VERSION); 
+  u8g2.print(FW_VERSION);
 
   u8g2.drawFrame(20, 30, 88, 10);
 
@@ -93,8 +93,6 @@ void drawPage_mainScreen() {
     u8g2.drawRFrame(99, 17, 25, 25, 2); // TRACK FRAME
     u8g2.setCursor(104, 27);
     u8g2.print("TRK");
-
-    display_enc1_dial("RATE /", 1);
   }
 
 
@@ -146,17 +144,38 @@ void drawPage_mainScreen() {
         display_enc2_dial(94, "STEPS", 1);
         (pattern_Length_Locked) ? display_enc2_click(89, "UNLOCK") : display_enc2_click(99, "LOCK");
       }
+
+      u8g2.setCursor(45, 55);
+      u8g2.setFont(triggerDude_small_font);
+      u8g2.print(rollRates[rollRates_cursor]);
+      display_enc1_dial("RATE /", 1);
     }
 
     else {
       display_enc2_dial(99, "TYPE", 1);
       u8g2.setCursor(99, 63);
       (bank[currentBank].pattern[currentPattern].track_isGate[selected_Track]) ? u8g2.print("GATE") : u8g2.print("TRIG");
+
+      display_enc1_dial("LOOP DIR.", 1);
+      u8g2.setCursor(99, 0);
+      switch (bank[currentBank].pattern[currentPattern].loop_dir[selected_Track]) {
+        case 0 : // FORWARD
+          u8g2.print("FORWARD");
+          break;
+
+        case 1 : // BACKWARD
+          u8g2.print("BACKWARD");
+          break;
+
+        case 2 : // PING PONG
+          u8g2.print("PING PONG");
+          break;
+      }
     }
 
     update_screen_ALT_BTN = false;
     if (!update_screen_INIT)
-      u8g2.updateDisplayArea(11, 6, 5, 2);
+      u8g2.updateDisplayArea(0, 6, 16, 2);
   }
 
 
@@ -164,13 +183,36 @@ void drawPage_mainScreen() {
     if (!update_screen_INIT)
       u8g2.clearBuffer();
 
-    u8g2.setCursor(45, 55);
-    u8g2.setFont(triggerDude_small_font);
-    u8g2.print(rollRates[rollRates_cursor]);
+    if (!ALT_pushed) {
+      u8g2.setCursor(45, 55);
+      u8g2.setFont(triggerDude_small_font);
+      u8g2.print(rollRates[rollRates_cursor]);
+    }
+
+    else {
+      u8g2.setCursor(99, 0);
+      switch (bank[currentBank].pattern[currentPattern].loop_dir[selected_Track]) {
+        case 0 : // FORWARD
+          u8g2.print("FORWARD");
+          break;
+
+        case 1 : // BACKWARD
+          u8g2.print("BACKWARD");
+          break;
+
+        case 2 : // PING PONG
+          u8g2.print("PING PONG");
+          break;
+      }
+    }
 
     update_screen_POTS_DIAL_L = false;
-    if (!update_screen_INIT)
-      u8g2.updateDisplayArea(5, 6, 2, 1);
+    if (!update_screen_INIT) {
+      if (!ALT_pushed)
+        u8g2.updateDisplayArea(5, 6, 2, 1);
+      else
+        u8g2.updateDisplayArea(0, 7, 7/*6*/, 1);
+    }
   }
 
 
@@ -1962,14 +2004,12 @@ void display_global_Step_4PPQN() {
 
 
 void display_CurrentBank(byte pix_x, byte pix_y) {     //  0 - 12 - 27 - 14
-  //byte currentBankDisplay = get_currentBank_Display(1);
   draw_3D_box(pix_x, pix_y, 27, 14, "BANK", 13);
   u8g2.print(get_currentBank_Display(1));
 }
 
 
 void display_CurrentPattern(byte pix_x, byte pix_y) {
-  //byte currentPatternDisplay = get_currentPattern_Display(1);
   draw_3D_box(pix_x, pix_y, 42, 14, "PATTERN", 13);
   u8g2.print(get_currentPattern_Display(1));
 }

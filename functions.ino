@@ -269,121 +269,49 @@ void reset_display_Screen() {
 
 
 void modulate_currentPattern(byte cvInNum) {
-  int cv_Input_Value = analogRead(cvInNum);
-  int cv_Input_Scaled = map(cv_Input_Value, 0, 1023, /*PATTERNS - 1*/ 0, /*-(PATTERNS - 1)*/ 11);
-
-  modulated_currentPattern = cv_Input_Scaled;
-
-  //if (modulated_currentPattern > PATTERNS - 1)
-  //modulated_currentPattern = PATTERNS - 1;
-
-  //return cv_Input_Scaled;
-}
-
-
-byte modulate_currentBank(byte cvInNum) {
-  int cv_Input_Value = analogRead(cvInNum);
-  int cv_Input_Scaled = map(cv_Input_Value, 0, 1023, BANKS - 1, -(BANKS - 1));
-
-  modulated_currentBank = cv_Input_Scaled;
-
+  modulated_currentPattern = map(analogRead(cvInNum), 0, 1023, 0, 11);
+  //modulated_currentPattern = map(analogRead(cvInNum), 0, 1023, PATTERN -1 , -(PATTERNS - 1));
   if (modulated_currentBank > 11) modulated_currentBank = 11;
-
-  return modulated_currentBank;
 }
 
 
-uint16_t modulate_pattern_Length(byte cvInNum, uint16_t lastPatLength) {
-  int cv_Input_Value = analogRead(cvInNum);
-  uint16_t cv_Input_Scaled = map(cv_Input_Value, 0, 1023, 1, lastPatLength);
+void modulate_currentBank(byte cvInNum) {
+  modulated_currentBank = map(analogRead(cvInNum), 0, 1023, BANKS - 1, -(BANKS - 1));
+  if (modulated_currentBank > 11) modulated_currentBank = 11;
+}
 
-  modulated_pattern_Length = cv_Input_Scaled;
+
+void modulate_pattern_Length(byte cvInNum, uint16_t lastPatLength) {
+  modulated_pattern_Length = map(analogRead(cvInNum), 0, 1023, 1, lastPatLength);
 
   if (modulated_pattern_Length < 1) modulated_pattern_Length = 1;
   else if (modulated_pattern_Length > MAX_STEPS_16PPQN) modulated_pattern_Length = MAX_STEPS_16PPQN;
-
-  return modulated_pattern_Length;
 }
 
-
-byte modulate_firstStep(byte cvInNum) {
-  int cv_Input_Value = analogRead(cvInNum);
-  //uint16_t pattern_LengthDisplay = get_pattern_Length();
-  byte lastStep = get_pattern_Length(4) - 1;
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, lastStep, bank[currentBank].pattern[currentPattern].firstStep);
-
-  modulated_firstStep = cv_Input_Scaled;
-
-  //if (modulated_firstStep > lastStep) modulated_firstStep = lastStep;
-
-  return modulated_firstStep;
+void modulate_firstStep(byte cvInNum) {
+  modulated_firstStep = map(analogRead(cvInNum), 0, 1023, (get_pattern_Length(4) - 1), bank[currentBank].pattern[currentPattern].firstStep);
 }
 
-
-byte modulate_current_Step(byte cvInNum) {
-  int cv_Input_Value = analogRead(cvInNum);
-  byte lastStep = get_pattern_Length(4) - 1;
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, lastStep, bank[currentBank].pattern[currentPattern].firstStep);
-
-  modulated_global_Step = cv_Input_Scaled;
-
-  //if (modulated_global_Step > lastStep) modulated_global_Step = lastStep;
-
-  return modulated_global_Step;
+void modulate_current_Step(byte cvInNum) {
+  modulated_global_Step = map(analogRead(cvInNum), 0, 1023, (get_pattern_Length(4) - 1), bank[currentBank].pattern[currentPattern].firstStep);
 }
 
-
-
-byte modulate_lfo1_Wave(byte cvInNum) {
-  byte arrSize = sizeof(LFOs_waves) / sizeof(LFOs_waves[0]);
-  int cv_Input_Value = analogRead(cvInNum);
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, arrSize - 1, 0);
-
-  modulated_lfo1Wave = cv_Input_Scaled;
-
-  //if (modulated_lfo1Wave > arrSize-1) modulated_lfo1Wave = arrSize-1;
-
-  return modulated_lfo1Wave;
+void modulate_lfo1_Wave(byte cvInNum) {
+  modulated_lfo1Wave = map(analogRead(cvInNum), 0, 1023, (sizeof(LFOs_waves) / sizeof(LFOs_waves[0]) - 1), 0);
 }
 
-byte modulate_lfo2_Wave(byte cvInNum) {
-  byte arrSize = sizeof(LFOs_waves) / sizeof(LFOs_waves[0]);
-  int cv_Input_Value = analogRead(cvInNum);
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, arrSize - 1, 0);
-
-  modulated_lfo2Wave = cv_Input_Scaled;
-
-  //if (modulated_lfo2Wave > arrSize-1) modulated_lfo2Wave = arrSize-1;
-
-  return modulated_lfo2Wave;
+void modulate_lfo2_Wave(byte cvInNum) {
+  modulated_lfo2Wave =  map(analogRead(cvInNum), 0, 1023, (sizeof(LFOs_waves) / sizeof(LFOs_waves[0]) - 1), 0);
 }
 
-byte modulate_lfo1_Rate(byte cvInNum) {
-  byte arrSize = sizeof(LFOs_rates) / sizeof(LFOs_rates[0]);
-  int cv_Input_Value = analogRead(cvInNum);
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, arrSize - 1, 0);
-
-  modulated_lfo1Rate = cv_Input_Scaled;
-
-  //if (modulated_lfo1Rate > arrSize-1) modulated_lfo1Rate = arrSize-1;
-
+void modulate_lfo1_Rate(byte cvInNum) {
+  modulated_lfo1Rate = map(analogRead(cvInNum), 0, 1023, (sizeof(LFOs_rates) / sizeof(LFOs_rates[0]) - 1), 0);
   update_LFO_Rate_micros();
-
-  return modulated_lfo1Rate;
 }
 
-byte modulate_lfo2_Rate(byte cvInNum) {
-  byte arrSize = sizeof(LFOs_rates) / sizeof(LFOs_rates[0]);
-  int cv_Input_Value = analogRead(cvInNum);
-  byte cv_Input_Scaled = map(cv_Input_Value, 0, 1023, arrSize - 1, 0);
-
-  modulated_lfo2Rate = cv_Input_Scaled;
-
-  //if (modulated_lfo2Rate > arrSize-1) modulated_lfo2Rate = arrSize-1;
-
+void modulate_lfo2_Rate(byte cvInNum) {
+  modulated_lfo2Rate = map(analogRead(cvInNum), 0, 1023, (sizeof(LFOs_rates) / sizeof(LFOs_rates[0]) - 1), 0);;
   update_LFO_Rate_micros();
-
-  return modulated_lfo2Rate;
 }
 
 
@@ -400,12 +328,10 @@ void modulateParams(byte paramSel_1, byte paramSel_2) {
 
       case 2:
         modulate_current_Step(CV_IN_1);
-
         break;
 
       case 3:
         modulate_pattern_Length(CV_IN_1, get_pattern_Length(16));
-
         break;
 
       case 4:
@@ -442,12 +368,10 @@ void modulateParams(byte paramSel_1, byte paramSel_2) {
 
       case 2:
         modulate_current_Step(CV_IN_2);
-
         break;
 
       case 3:
         modulate_pattern_Length(CV_IN_2, get_pattern_Length(16));
-
         break;
 
       case 4:
@@ -518,11 +442,8 @@ done :
 
 
 void checkIf_patternEmpty(byte ze_bank, byte ze_pattern) {
-  for (int i = 0; i < (TRACKS_AB); ++i) {
-    uint8_t byteToRead = i / 8;
-    uint8_t bitPos = i & 7;
-
-    if ((bank[ze_bank].pattern[ze_pattern].track_has_Trigs[byteToRead] & masks[bitPos]) > 0) {
+  for (byte track = 0; track < (TRACKS_AB); ++track) {
+    if ((bank[ze_bank].pattern[ze_pattern].track_has_Trigs[track / 8] & masks[track & 7]) > 0) {
       bank[ze_bank].notEmpty_Pattern[ze_pattern] = 1;
       break;
     }
@@ -571,6 +492,8 @@ void reset_Pattern(byte ze_bank, byte ze_pattern) {
     bank[ze_bank].pattern[ze_pattern].fill_rate[track] = 16;
     bank[ze_bank].pattern[ze_pattern].AB_State[track] = 0;
     bank[ze_bank].pattern[ze_pattern].track_Length[track] = 32;
+    bank[ze_bank].pattern[ze_pattern].loop_dir[track] = 0;
+    loop_dir_right[track] = true;
 
     bank[ze_bank].pattern[ze_pattern].track_isGate[track] = 0;
 

@@ -28,7 +28,7 @@ void makeDACplayNotes() {
 
     if (track == 12) { // desactivé
       //pitchOut = notesValues[24];
-      Dac.setPowerDown(dac, DAC8554_POWERDOWN_100K);
+      Dac.setSinglePowerDown(dac, DAC8554_POWERDOWN_100K);
     }
 
     else {

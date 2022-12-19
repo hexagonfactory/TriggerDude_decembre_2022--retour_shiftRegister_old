@@ -1,5 +1,4 @@
 void reset_modes_on_screenChange(/*byte currentScreen*/) {
-  //u8g2.clearBuffer();
   ALT_pushed = false;
   recMode = 0;
   pitchMode = 0;
@@ -35,7 +34,20 @@ void detect_remoteBtnsPush() {
         global_Step_16PPQN = get_pattern_Length(16) - 1;
 
         for (byte track = 0; track < TRACKS; ++track) {
-          track_Step_16PPQN[track] = get_track_Length(track, 16) - 1;
+          switch (bank[currentBank].pattern[currentPattern].loop_dir[track]) {
+            case 0 : // FORWARD
+              track_Step_16PPQN[track] = get_track_Length(track, 16) - 1;
+              break;
+
+            case 1 : // BACKWARD
+              track_Step_16PPQN[track] = get_firstStep(16);
+              break;
+
+            case 2 : // PING PONG
+              track_Step_16PPQN[track] = get_track_Length(track, 16) - 1;
+              loop_dir_right[track] = true;
+              break;
+          }
         }
 
         //tick = 31;

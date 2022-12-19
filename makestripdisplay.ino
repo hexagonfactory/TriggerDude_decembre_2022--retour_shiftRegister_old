@@ -422,7 +422,6 @@ void makeStripDisplay_SongMode() {
 
 void makeStripDisplay_Bank_Selection() {
   if (update_padLeds) {
-    //byte currentBankDisplay = get_currentBank_Display(0);
     for (byte pad = 0; pad < TRACKS; ++pad) {
       if (pad == currentBankDisplay)
         strip.setPixelColor(pad, 219, 197, 0);

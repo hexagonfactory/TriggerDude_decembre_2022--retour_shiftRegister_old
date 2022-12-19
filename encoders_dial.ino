@@ -967,25 +967,25 @@ void set_songMode_Step() {
     if (songMode_current_Step_pot > 0)
       songMode_current_Step_pot--;
   }
-  
+
   fired_1 = false;
 }
 
 
-void set_led_brightness() {
+void set_pads_brightness() {
   if (enc2_dir == 1) {
-    if (led_brightness < 150) {
-      led_brightness += 10;
+    if (pads_brightness < 150) {
+      pads_brightness += 10;
     }
   }
 
   else if (enc2_dir == -1) {
-    if (led_brightness > 10) {
-      led_brightness -= 10;
+    if (pads_brightness > 10) {
+      pads_brightness -= 10;
     }
   }
 
-  strip.setBrightness(led_brightness);
+  strip.setBrightness(pads_brightness);
   strip.show();
 
   fired_2 = false;
@@ -1061,7 +1061,7 @@ void set_shuffle() {
   }
 
   //update_screen = true;
-  fired_2 = false; 
+  fired_2 = false;
 }
 
 
@@ -1090,7 +1090,18 @@ void set_track_type_TrigOrGate() {
   }
 
   //update_screen = true;
+  fired_2 = false;
+}
 
+
+void set_track_LOOP_DIR() {
+  if ((enc1_dir == 1) && bank[currentBank].pattern[currentPattern].loop_dir[selected_Track] < 2) {
+    bank[currentBank].pattern[currentPattern].loop_dir[selected_Track]++;
+  }
+
+  else if ((enc1_dir == -1) && bank[currentBank].pattern[currentPattern].loop_dir[selected_Track] > 0) {
+    bank[currentBank].pattern[currentPattern].loop_dir[selected_Track]--;
+  }
 
   fired_2 = false;
 }

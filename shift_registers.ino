@@ -17,10 +17,10 @@ void read_shift_registers() {
 
   for (byte i = 0; i < DATA_WIDTH; ++i) {
     if (i < TRACKS) {
-      if ((screenConfig == 1 && bank[currentBank].pattern[currentPattern].track_isGate[i]) ||
+      if ((screenConfig == 1 && bank[currentBank].pattern[currentPattern].track_isGate[i]) ||               // NORMAL MODE
           screenConfig == 6 ||
-          screenConfig == 8 ||
-          (chromaMode_KBoard && bank[currentBank].pattern[currentPattern].track_isGate[selected_Track]) ||
+          screenConfig == 8 ||                                                                              // NORMAL MODE
+          (chromaMode_KBoard && bank[currentBank].pattern[currentPattern].track_isGate[selected_Track]) ||    // NORMAL MODE
           chromaMode_Arp) { // DELETE / ROLL / ARP
         trigsIn_BitVal[i] = bitRead(current_pinValues, i);
       }
@@ -47,7 +47,7 @@ unsigned int decimalValue_from_pads() {
   for (byte i = DATA_WIDTH - 1, j = 0; i > 3; i--) {
     decimalValue_pads += trigsIn_BitVal[j++] << i;
   }
-  
+
   return decimalValue_pads;
 }
 
@@ -58,7 +58,7 @@ unsigned int decimalValue_from_pads() {
     decimalValue_pads += trigsIn_BitVal[j++] << i;
   }
   return decimalValue_pads;
-}*/
+  }*/
 
 
 unsigned int decimalValue_from_chromaMode() {

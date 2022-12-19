@@ -7,20 +7,19 @@ void setPadsActions_normalMode() {
 
   if (current_pinValues != last_pinValues) {
     if ((current_pinValues > 0) && (current_pinValues < 4096)) {
-      currentBankDisplay = get_currentBank_Display(0);
-      currentPatternDisplay = get_currentPattern_Display(0);
       button_micro = micros();
       timeFlag_pads = true;
       update_screen_PADS = true;
     }
+    
     update_padLeds = true;
   }
 
   if ((current_pinValues > 0) && (current_pinValues < 4096)) {
     for (byte track = 0; track < TRACKS; ++track) {
-      if (trigsIn_BitVal[track]) {
+      if (trigsIn_BitVal[track] /*&& (micros() - last_pads_DebounceTime_micros[track] >= DEBOUNCE_PADS_MICROS)*/) {
+        //last_pads_DebounceTime_micros[track] = micros();
         selected_Track = track;
-        //update_screen_PADS = true;
         read_Seq_dont_play_this[track] = false;
 
         if (!ALT_pushed && recMode && PLAY_pushed) {
@@ -714,12 +713,7 @@ void setPadsActions_muteSolo() { // MUTE - SOLO
 
 void setPadsActions_Fill() {
   if (current_pinValues != last_pinValues) {
-    static byte currentBankDisplay = 0;
-    static byte currentPatternDisplay = 0;
-
     if ((current_pinValues > 0) && (current_pinValues < 4096)) {
-      currentBankDisplay = get_currentBank_Display(0);
-      currentPatternDisplay = get_currentPattern_Display(0);
       update_padLeds = true;
       update_screen_PADS = true;
     }

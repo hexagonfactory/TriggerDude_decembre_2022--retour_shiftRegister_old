@@ -68,9 +68,32 @@ void clockBeats() {
       global_Step_16PPQN++;
 
       for (byte track = 0; track < TRACKS; ++track) {
-        track_Step_16PPQN[track]++;
-        if (track_Step_16PPQN[track] >= get_track_Length(track, 16))
-          track_Step_16PPQN[track] = (PLAYING) ? get_firstStep(16) : get_track_Length(track, 16) - 1;
+        switch (bank[currentBank].pattern[currentPattern].loop_dir[track]) {
+          case 0 : // FORWARD
+            track_Step_16PPQN[track]++;
+            if (track_Step_16PPQN[track] >= get_track_Length(track, 16))
+              track_Step_16PPQN[track] = (PLAYING) ? get_firstStep(16) : get_track_Length(track, 16) - 1; // a confirmer si vraiment necessaire (forcément PLAYING true non ?)
+            break;
+
+          case 1 : // BACKWARD
+            track_Step_16PPQN[track]--;
+            if (track_Step_16PPQN[track] < get_firstStep(16))
+              track_Step_16PPQN[track] = (PLAYING) ? get_track_Length(track, 16) - 1 : get_firstStep(16);
+            break;
+
+          case 2 : // PING PONG
+            if (loop_dir_right[track] == true) {
+              track_Step_16PPQN[track]++;
+              if (track_Step_16PPQN[track] >= get_track_Length(track, 16))
+                loop_dir_right[track] = false;
+            }           
+            else {
+              track_Step_16PPQN[track]--;
+              if (track_Step_16PPQN[track] < get_firstStep(16))
+                loop_dir_right[track] = true;
+            }
+            break;
+        }
       }
 
       if (global_Step_16PPQN % 4 == 0) {

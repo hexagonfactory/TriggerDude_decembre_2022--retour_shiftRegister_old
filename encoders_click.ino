@@ -1,6 +1,6 @@
 void detect_set_FIRSTSTEP_Range() {
   enc2_Range_10 = !enc2_Range_10;
-  enc2_clk = false; 
+  enc2_clk = false;
 }
 
 
@@ -68,8 +68,9 @@ void detect_rollOnOff() {
     screenConfig = 8;
     rollMode = 1;
     recMode = 0;
+    get_RollRateCalc();
   }
-  
+
   update_screen_INIT = true;
   update_padLeds = true;
   enc1_clk = false;
@@ -96,40 +97,14 @@ void detect_lockpattern_LengthOnOff() {
   enc2_clk = false;
 }
 
-/*void detect_pitchMode_OnOff() {
-  bool encoder2_Btn_State = digitalRead(encoder2_Btn);
-  if (encoder2_Btn_State != last_encoder2_Btn_State) {
-    if (encoder2_Btn_State == 0) {
-      if (pitchMode == 0) {
-        screenConfig = 12;
-        pitchMode = 1;
-      }
-      else {
-        screenConfig = 10;
-        pitchMode = 0;
-      }
-
-      stepSeq_clickedStep = 255;
-      MICROTIMING = 0;
-
-      update_padLeds = true;
-      //update_screen = true;
-    }
-  }
-  last_encoder2_Btn_State = encoder2_Btn_State;
-  }*/
-
 
 void detect_stepSeq_params_OnOff() {
-  if (screenConfig != 11) {
+  if (screenConfig != 11)
     screenConfig = 11;
-  }
 
-  else {
+  else
     screenConfig = 10;
-  }
 
-  //stepSeq_clickedStep = 255;
   MICROTIMING = 0;
 
   update_padLeds = true;
